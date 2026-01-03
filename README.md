@@ -1,8 +1,11 @@
-# GenericTheme
-Play skin(7K/5K) for beatoraja made by lua.
+# GenericTheme-Enhanced
+This is a fork of [GenericTheme](https://github.com/Shimi9999/GenericTheme), a play skin(7K/5K) for beatoraja made by lua.
 
 ## Download
-[Here](https://github.com/Shimi9999/GenericTheme/archive/refs/heads/master.zip)
+
+[Here](https://github.com/surreal420/GenericTheme/archive/refs/heads/master.zip)
+
+Or `git clone` this repository.
 
 ## Screenshots
 default
@@ -18,6 +21,9 @@ lua codes: GPLv3 (https://www.gnu.org/licenses/gpl-3.0.html)
 images: CC BY-SA 3.0 (https://creativecommons.org/licenses/by-sa/3.0)
 
 ## Credit
+### Original Skin
+- GenericTheme by Shimi9999 (https://github.com/Shimi9999/GenericTheme)
+
 ### Fonts
 - 源真ゴシック (http://jikasei.me/font/genshin/)  
   Licensed under SIL Open Font License 1.1 (http://scripts.sil.org/OFL)  

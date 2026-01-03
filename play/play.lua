@@ -310,7 +310,8 @@ local filepath = {
 	{name = "Glow", path = "customize/glow/*.png", def = "default"},
 	{name = "Judge", path = "customize/judge/*.png", def = "SquadaOne"},
 	{name = "Keybeam", path = "customize/keybeam/*.png", def = "default"},
-	{name = "Bomb", path = "customize/bomb/*.png", def = "explosion"},
+	{name = "Bomb", path = "customize/bomb/normal/*.png", def = "explosion"},
+	{name = "LN Bomb", path = "customize/bomb/ln/*.png", def = "explosion_ln"},
 	{name = "LaneCover", path = "customize/lanecover/*.png", def = "default"},
 	{name = "HiddenCover", path = "customize/hiddencover/*.png", def = "default"},
 	{name = "LiftCover", path = "customize/liftcover/*.png", def = "default"},
@@ -340,7 +341,7 @@ local offset_source = {
 
 local header = {
 	type = 0,
-	name = "GenericTheme",
+	name = "GenericTheme-Enhanced",
 	w = 1920,
 	h = 1080,
 	loadend = 3000,
@@ -591,7 +592,8 @@ local function main(keysNumber)
 		{id = "src_glow", path = "customize/glow/*.png"},
 		{id = "src_judge", path = "customize/judge/*.png"},
 		{id = "src_keybeam", path = "customize/keybeam/*.png"},
-		{id = "src_bomb", path = "customize/bomb/*.png"},
+		{id = "src_bomb", path = "customize/bomb/normal/*.png"},
+		{id = "src_lnbomb", path = "customize/bomb/ln/*.png"},
 		{id = "src_lanecover", path = "customize/lanecover/*.png"},
 		{id = "src_hiddencover", path = "customize/hiddencover/*.png"},
 		{id = "src_liftcover", path = "customize/liftcover/*.png"},
@@ -2795,37 +2797,48 @@ local function main(keysNumber)
 	do
 		local w local h
 		local divx = 4 local divy = 4
+		local factor = 2
+		local frame_time = 15.625
 
 		-- get bomb settings from <bomb_image_filename>.lua
-		local path = string.match(skin_config.get_path("customize/bomb/" .. skin_config.file_path["Bomb"]), "(.+)%.png$") .. ".lua"
+		local path = string.match(skin_config.get_path("customize/bomb/normal/" .. skin_config.file_path["Bomb"]), "(.+)%.png$") .. ".lua"
 		local exist, setting = pcall(dofile, path)
 		if exist and setting then
 			if setting.w then w = setting.w end
 			if setting.h then h = setting.h end
 			if setting.divx then divx = setting.divx end
 			if setting.divy then divy = setting.divy end
+			if setting.factor then factor = setting.factor end
+			if setting.frame_time then frame_time = setting.frame_time end
 		end
+		-- TODO: fastslow bomb 判定は各ボムの lua 側に移す予定
 		local isFastSlowBomb = divx == 16 and divy >= 3 and w and h
+
+		local ln_w local ln_h
+		local ln_divx = 8
+		local ln_factor = 2
+		local ln_frame_time = 15.625
+
+		-- get lnbomb settings from <lnbomb_image_filename>.lua
+		local path = string.match(skin_config.get_path("customize/bomb/ln/" .. skin_config.file_path["LN Bomb"]), "(.+)%.png$") .. ".lua"
+		local exist, setting = pcall(dofile, path)
+		if exist and setting then
+			if setting.w then ln_w = setting.w end
+			if setting.h then ln_h = setting.h end
+			if setting.divx then ln_divx = setting.divx end
+			if setting.factor then ln_factor = setting.factor end
+			if setting.frame_time then ln_frame_time = setting.frame_time end
+		end
 
 		local function bombTimer(i) return 50 + i % (keysNumber + 1) end
 		local function lnBombTimer(i) return 70 + i % (keysNumber + 1) end
 
-		local normal_cycle = 250 local ln_cycle = 160
+		local normal_cycle = frame_time * divx * (isFastSlowBomb and 1 or divy)
+		local ln_cycle = ln_frame_time * ln_divx
 		if isFastSlowBomb then
-			local function lnpos_y(i)
-				if i == keysNumber + 1 then
-					return h * 3
-				elseif i % 2 == 1 then
-					return h
-				else
-					return h * 2
-				end
-			end
 			for i = 1, keysNumber + 1 do
 				append_all(skin.image, {
 					{id = "bomb_"..i, src = "src_bomb", x = 0, y = 0, w = -1, h = h, divx = 16, timer = bombTimer(i), cycle = normal_cycle},
-					--{id = "lnbomb_"..i, src = "src_bomb", x = 0, y = lnpos_y(i), w = w * 8, h = h, divx = 8, timer = lnBombTimer(i), cycle = ln_cycle},
-					{id = "lnbomb_"..i, src = "src_bomb", x = 0, y = 0, w = w * 8, h = h, divx = 8, timer = lnBombTimer(i), cycle = ln_cycle},
 					{id = "slowbomb_"..i, src = "src_bomb", x = 0, y = h, w = -1, h = h, divx = 16, timer = bombTimer(i), cycle = normal_cycle},
 					{id = "fastbomb_"..i, src = "src_bomb", x = 0, y = h * 2, w = -1, h = h, divx = 16, timer = bombTimer(i), cycle = normal_cycle}
 				})
@@ -2836,27 +2849,25 @@ local function main(keysNumber)
 					table.insert(skin.image, {
 						id = "bomb_"..i, src = "src_bomb", x = 0, y = 0, w = w * divx, h = h * divy, divx = divx, divy = divy, timer = bombTimer(i), cycle = normal_cycle
 					})
-					local _divx = divx local _divy = divy / 2
-					if divy == 1 then
-						_divx = divx / 2
-						_divy = divy
-					end
-					table.insert(skin.image, {
-						id = "lnbomb_"..i, src = "src_bomb", x = 0, y = 0, w = w * _divx, h = h * _divy, divx = _divx, divy = _divy, lnBombTimer(i), cycle = ln_cycle
-					})
 				else
 					table.insert(skin.image, {
 						id = "bomb_"..i, src = "src_bomb", x = 0, y = 0, w = -1, h = -1, divx = divx, divy = divy, timer = bombTimer(i), cycle = normal_cycle
-					})
-					table.insert(skin.image, {
-						id = "lnbomb_"..i, src = "src_bomb", x = 0, y = 0, w = -1, h = -1, divx = divx, divy = divy, timer = lnBombTimer(i), cycle = ln_cycle
 					})
 				end
 			end
 		end
 
+		for i = 1, keysNumber do
+			table.insert(skin.image, {
+				id = "lnbomb_"..i, src = "src_lnbomb", x = 0, y = ln_h*((i+1)%2), w = ln_w * ln_divx, h = ln_h, divx = ln_divx, divy = 1, lnBombTimer(i), cycle = ln_cycle
+			})
+		end
+		table.insert(skin.image, {
+			id = "lnbomb_"..(keysNumber+1), src = "src_lnbomb", x = 0, y = ln_h*2, w = ln_w * ln_divx, h = ln_h, divx = ln_divx, divy = 1, lnBombTimer(keysNumber+1), cycle = ln_cycle
+		})
+
 		-- TODO fast/slowボムのON/OFF作る？
-		local size_w = geo.lane.each_w[keysNumber + 1] * 2 + offset.bomb.w
+		local size_w = geo.lane.each_w[keysNumber + 1] * factor + offset.bomb.w
 		local size_h = size_w
 		if w and h then
 			if w < h then
@@ -2865,9 +2876,20 @@ local function main(keysNumber)
 				size_w = w * size_h / h
 			end
 		end
+		local ln_size_w = geo.lane.each_w[keysNumber + 1] * ln_factor + offset.bomb.w
+		local ln_size_h = ln_size_w
+		if ln_w and ln_h then
+			if ln_w < ln_h then
+				ln_size_h = ln_h * ln_size_w / ln_w
+			else
+				ln_size_w = ln_w * ln_size_h / ln_h
+			end
+		end
 		local y = geo.lane.y - size_h / 2 + geo.lane.judgeline_h / 2
+		local ln_y = geo.lane.y - ln_size_h / 2 + geo.lane.judgeline_h / 2
 		for i = 1, keysNumber + 1 do
 			local x = geo.lane.each_x[i] + geo.lane.each_w[i] / 2 - size_w / 2
+			local ln_x = geo.lane.each_x[i] + geo.lane.each_w[i] / 2 - ln_size_w / 2
 			if isFastSlowBomb then
 				append_all(skin.destination, {
 					{id = "bomb_"..i, offset = 3, loop = -1, filter = 1, timer = bombTimer(i), op = {-1242, -1243}, blend = 2, dst = {
@@ -2881,24 +2903,22 @@ local function main(keysNumber)
 					{id = "slowbomb_"..i, offset = 3, loop = -1, filter = 1, timer = bombTimer(i), op = {1243}, blend = 2, dst = {
 						{time = 0, x = x, y = y, w = size_w, h = size_h},
 						{time = normal_cycle - 1}
-					}},
-					{id = "lnbomb_"..i, offset = 3, loop = ln_cycle, filter = 1, timer = lnBombTimer(i), blend = 2, dst = {
-						{time = 0, x = x, y = y, w = size_w, h = size_h},
-						{time = ln_cycle - 1}
 					}}
 				})
 			else
-				append_all(skin.destination, {
+				table.insert(skin.destination, 
 					{id = "bomb_"..i, offset = 3, loop = -1, filter = 1, timer = bombTimer(i), blend = 2, dst = {
 						{time = 0, x = x, y = y, w = size_w, h = size_h},
 						{time = normal_cycle - 1}
-					}},
-					{id = "lnbomb_"..i, offset = 3, loop = ln_cycle, filter = 1, timer = lnBombTimer(i), blend = 2, dst = {
-						{time = 0, x = x, y = y, w = size_w, h = size_h},
-						{time = ln_cycle - 1}
 					}}
-				})
+				)
 			end
+			table.insert(skin.destination, 
+				{id = "lnbomb_"..i, offset = 3, loop = ln_cycle, filter = 1, timer = lnBombTimer(i), blend = 2, dst = {
+					{time = 0, x = ln_x, y = ln_y, w = ln_size_w, h = ln_size_h},
+					{time = ln_cycle - 1}
+				}}
+			)
 		end
 	end
 	-- fullcombo effect
