@@ -2068,8 +2068,8 @@ local function main(keysNumber)
 	end
 	-- lane
 	do
-		local black = {r = 0, g = 0, b = 0}
-		local white = {r = 5, g = 5, b = 5}
+		local black = {r = 10, g = 10, b = 10}
+		local white = {r = 30, g = 30, b = 30}
 		for i = 1, keysNumber + 1 do
 			local color = black
 			if i % 2 == 1 then
@@ -2082,7 +2082,7 @@ local function main(keysNumber)
 	end
 	-- laneSeparateLine
 	do
-		local rgb = 30
+		local rgb = 90
 		for i = 2, #geo.lane.order do
 			table.insert(skin.destination, {id = -111, offset = 3, dst = {
 				{x = geo.lane.each_x[geo.lane.order[i]] - geo.lane.separateline_w, y = geo.lane.y, w = geo.lane.separateline_w, h = geo.lane.h, r = rgb, g = rgb, b = rgb}
