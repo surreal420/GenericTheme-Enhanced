@@ -2,7 +2,11 @@
 
 ## New Features
 
-### 1. Bomb Classification System
+### 1. Scratch Keybeam Animation
+- Added selectable animation behavior for scratch keybeam
+- Setting location: `Scratch Keybeam Animation` in skin configuration
+
+### 2. Bomb Type
 - Bombs are now divided into two types:
   - **Normal Bomb**: Explosion effects for regular notes
   - **LN Bomb**: Dedicated explosion effects for Long Notes

@@ -186,6 +186,13 @@ local property = {
 			on = {name = "On", op = 966},
 		}
 	},
+	scratchKeybeamAnimation = {
+		name = "Scratch Keybeam Animation",
+		item = {
+			kb = {name = "KB", op = 982},
+			bm = {name = "BM", op = 983},
+		}
+	},
 	total = {
 		name = "Display #TOTAL",
 		item = {
@@ -214,6 +221,7 @@ local property_order = {
 	"laneCentering",
 	"absolutePositioning",
 	"hideFrames",
+	"scratchKeybeamAnimation",
 	"total"
 }
 -- 全itemに、そのオプションが選択中か返すisSelected()をセットする
@@ -2137,36 +2145,57 @@ local function main(keysNumber)
 		end
 		local h = geo.lane.h / 2 + offset.keybeam.h
 		local a = 255 + offset.keybeam.a
+
+		local keybeam_attack_duration = 40
+		local keybeam_sustain_duration = 30
+		local keybeam_release_duration = 100
+
 		-- push
 		do
 			for i = 1, keysNumber do
 				table.insert(skin.destination, {
-					id = "keybeam_"..kind[i], offset = 3, timer = timer[i], brend = 1, dst = {
+					id = "keybeam_"..kind[i], offset = 3, timer = timer[i], blend = 1, dst = {
 						{x = geo.lane.each_x[i], y = geo.lane.y, w = geo.lane.each_w[i], h = h, a = a}
 					}
 				})
 			end
 			-- スクラッチのキービームのみ伸びるアニメーションをする(オートプレイではオフ)
-			local scratch_ontime = 40
+			if property.scratchKeybeamAnimation.item.bm.isSelected() then
+				table.insert(skin.destination, {
+					id = "keybeam_s", offset = 3, timer = timer[keysNumber + 1], op = {32}, blend = 1, loop = -1, dst = {
+						{time = 0, x = geo.lane.each_x[keysNumber + 1], y = geo.lane.y, w = geo.lane.each_w[keysNumber + 1], h = 0, a = a},
+						{time = keybeam_attack_duration, h = h},
+						{time = keybeam_attack_duration + keybeam_sustain_duration},
+						{time = keybeam_attack_duration + keybeam_sustain_duration + keybeam_release_duration, x = geo.lane.each_x[keysNumber + 1] + geo.lane.each_w[keysNumber + 1] / 2, w = 0, a = 0}
+					}
+				})
+			else
+				table.insert(skin.destination, {
+					id = "keybeam_s", offset = 3, timer = timer[keysNumber + 1], op = {32}, blend = 1, loop = keybeam_attack_duration, dst = {
+						{time = 0, x = geo.lane.each_x[keysNumber + 1], y = geo.lane.y, w = geo.lane.each_w[keysNumber + 1], h = 0, a = a},
+						{time = keybeam_attack_duration, h = h}
+					}
+				})
+			end
+
+			-- keybeam of scratch when autoplay is on
 			table.insert(skin.destination, {
-				id = "keybeam_s", offset = 3, timer = timer[keysNumber + 1], op = {32}, brend = 1, loop = scratch_ontime, dst = {
-					{time = 0, x = geo.lane.each_x[keysNumber + 1], y = geo.lane.y, w = geo.lane.each_w[keysNumber + 1], h = 0, a = a},
-					{time = scratch_ontime, h = h}
-				}
-			})
-			table.insert(skin.destination, {
-				id = "keybeam_s", offset = 3, timer = timer[keysNumber + 1], op = {33}, brend = 1, dst = {
+				id = "keybeam_s", offset = 3, timer = timer[keysNumber + 1], op = {33}, blend = 1, dst = {
 					{x = geo.lane.each_x[keysNumber + 1], y = geo.lane.y, w = geo.lane.each_w[keysNumber + 1], h = h, a = a}
 				}
 			})
 		end
 		-- away
-		local key_offtime = 100
-		for i = 1, keysNumber + 1 do
+		
+		local release_keycount = keysNumber
+		if property.scratchKeybeamAnimation.item.kb.isSelected() then
+			release_keycount = keysNumber + 1
+		end
+		for i = 1, release_keycount do -- skipping scratch
 			table.insert(skin.destination, {
-				id = "keybeam_"..kind[i], offset = 3, timer = timer[i] + 20, brend = 1, loop = key_offtime, acc = 2, dst = {
+				id = "keybeam_"..kind[i], offset = 3, timer = timer[i] + 20, blend = 1, loop = keybeam_release_duration, acc = 2, dst = {
 					{time = 0, x = geo.lane.each_x[i], y = geo.lane.y, w = geo.lane.each_w[i], h = h, a = a},
-					{time = key_offtime, x = geo.lane.each_x[i] + geo.lane.each_w[i] / 2, w = 0, a = 0}
+					{time = keybeam_release_duration, x = geo.lane.each_x[i] + geo.lane.each_w[i] / 2, w = 0, a = 0}
 				}
 			})
 		end
