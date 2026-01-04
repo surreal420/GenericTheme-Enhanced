@@ -3,5 +3,5 @@ return {
     h = 400,
     divx = 4,
     divy = 4,
-    factor = 4.2
+    factor = 2.1
 }

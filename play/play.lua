@@ -341,6 +341,7 @@ local offset_source = {
 	{key = "bpm", name = "BPM offset", id = 48, x = true, y = true, a = true},
 	{key = "notesgraph", name = "NotesGraph offset", id = 49, x = true, y = true, w = true, h = true, a = true},
 	{key = "timingvisualizer", name = "Timing Visualizer offset", id = 50, x = true, y = true, w = true, h = true, a = true},
+	{key = "gaugearea", name = "Gauge Area offset", id = 56, a = true},
 	{key = "lowerlanearea_darkness", name = "LowerLaneArea darkness(0~255)", id = 51, a = true},
 	{key = "scoregraph", name = "ScoreGraph offset", id = 52, x = true, w = true, a = true},
 	{key = "scoregraph_darkness", name = "ScoreGraph darkness(0~255)", id = 53, a = true},
@@ -2546,7 +2547,7 @@ local function main(keysNumber)
 	geo.gauge.h = 35
 	-- gauge area background
 	table.insert(skin.destination, {id = -110, dst = {
-		{x = geo.gaugearea.x, y = 0, w = geo.gaugearea.w, h = header.h - geo.lane.h - 4, a = 240},
+		{x = geo.gaugearea.x, y = 0, w = geo.gaugearea.w, h = header.h - geo.lane.h - 4, a = 255 + offset.gaugearea.a},
 	}})
 	-- gauge
 	do
@@ -2775,13 +2776,13 @@ local function main(keysNumber)
 			lla_id = -102
 		end
 		table.insert(skin.destination,
-			{id = lla_id, dst = {
+			{id = lla_id, filter = 1, dst = {
 				{x = x, y = y, w = w, h = h},
 			}}
 		)
 		if string.match(lla_id, "notesgraph") then
 			table.insert(skin.destination,
-				{id = "bpmgraph", op = {177}, dst = {
+				{id = "bpmgraph", op = {177}, filter = 1, dst = {
 					{x = x, y = y, w = w, h = h},
 				}}
 			)
@@ -2827,7 +2828,7 @@ local function main(keysNumber)
 	do
 		local w local h
 		local divx = 4 local divy = 4
-		local factor = 2
+		local factor = 1
 		local frame_time = 15.625
 
 		-- get bomb settings from <bomb_image_filename>.lua
@@ -2846,7 +2847,7 @@ local function main(keysNumber)
 
 		local ln_w local ln_h
 		local ln_divx = 8
-		local ln_factor = 2
+		local ln_factor = 1
 		local ln_frame_time = 15.625
 
 		-- get lnbomb settings from <lnbomb_image_filename>.lua
@@ -2897,7 +2898,7 @@ local function main(keysNumber)
 		})
 
 		-- TODO fast/slowボムのON/OFF作る？
-		local size_w = geo.lane.each_w[keysNumber + 1] * factor + offset.bomb.w
+		local size_w = geo.lane.each_w[keysNumber + 1] * 2 * factor + offset.bomb.w
 		local size_h = size_w
 		if w and h then
 			if w < h then
@@ -2906,7 +2907,7 @@ local function main(keysNumber)
 				size_w = w * size_h / h
 			end
 		end
-		local ln_size_w = geo.lane.each_w[keysNumber + 1] * ln_factor + offset.bomb.w
+		local ln_size_w = geo.lane.each_w[keysNumber + 1] * 2 * ln_factor + offset.bomb.w
 		local ln_size_h = ln_size_w
 		if ln_w and ln_h then
 			if ln_w < ln_h then
