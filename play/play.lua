@@ -927,53 +927,53 @@ local function main(keysNumber)
 				id = "judge",
 				index = 0,
 				images = {
-					{id = "judge_f_pg", loop = -1, timer = 46, offsets = {3, 32}, dst = {
+					{id = "judge_f_pg", loop = -1, timer = 46, offsets = {3, 32}, filter = 1, dst = {
 						{time = 0, x = f_x, y = geo.judge.y, w = f_w, h = geo.judge.h},
 						{time = looptime}
 					}},
-					{id = "judge_f_gr", loop = -1, timer = 46, offsets = {3, 32}, dst = {
+					{id = "judge_f_gr", loop = -1, timer = 46, offsets = {3, 32}, filter = 1, dst = {
 						{time = 0, x = f_x, y = geo.judge.y, w = f_w, h = geo.judge.h},
 						{time = looptime}
 					}},
-					{id = "judge_f_gd", loop = -1, timer = 46, offsets = {3, 32}, dst = {
+					{id = "judge_f_gd", loop = -1, timer = 46, offsets = {3, 32}, filter = 1, dst = {
 						{time = 0, x = f_x, y = geo.judge.y, w = f_w, h = geo.judge.h},
 						{time = looptime}
 					}},
-					{id = "judge_f_bd", loop = -1, timer = 46, offsets = {3, 32}, dst = {
+					{id = "judge_f_bd", loop = -1, timer = 46, offsets = {3, 32}, filter = 1, dst = {
 						{time = 0, x = f_x, y = geo.judge.y, w = f_w, h = geo.judge.h},
 						{time = looptime}
 					}},
-					{id = "judge_f_pr", loop = -1, timer = 46, offsets = {3, 32}, dst = {
+					{id = "judge_f_pr", loop = -1, timer = 46, offsets = {3, 32}, filter = 1, dst = {
 						{time = 0, x = f_x, y = geo.judge.y, w = f_w, h = geo.judge.h},
 						{time = looptime}
 					}},
-					{id = "judge_f_ms", loop = -1, timer = 46, offsets = {3, 32}, dst = {
+					{id = "judge_f_ms", loop = -1, timer = 46, offsets = {3, 32}, filter = 1, dst = {
 						{time = 0, x = f_x, y = geo.judge.y, w = f_w, h = geo.judge.h},
 						{time = looptime}
 					}}
 				},
 				numbers = {
-					{id = "judge_n_pg", loop = -1, offset = 32, timer = 46, dst = {
+					{id = "judge_n_pg", loop = -1, offset = 32, timer = 46, filter = 1, dst = {
 						{time = 0, x = n_x, y = n_y, w = n_w, h = geo.judge.h},
 						{time = looptime}
 					}},
-					{id = "judge_n_gr", loop = -1, offset = 32, timer = 46, dst = {
+					{id = "judge_n_gr", loop = -1, offset = 32, timer = 46, filter = 1, dst = {
 						{time = 0, x = n_x, y = n_y, w = n_w, h = geo.judge.h},
 						{time = looptime}
 					}},
-					{id = "judge_n_gd", loop = -1, offset = 32, timer = 46, dst = {
+					{id = "judge_n_gd", loop = -1, offset = 32, timer = 46, filter = 1, dst = {
 						{time = 0, x = n_x, y = n_y, w = n_w, h = geo.judge.h},
 						{time = looptime}
 					}},
-					{id = "judge_n_bd", loop = -1, offset = 32, timer = 46, dst = {
+					{id = "judge_n_bd", loop = -1, offset = 32, timer = 46, filter = 1, dst = {
 						{time = 0, x = n_x, y = n_y, w = n_w, h = geo.judge.h},
 						{time = looptime}
 					}},
-					{id = "judge_n_pr", loop = -1, offset = 32, timer = 46, dst = {
+					{id = "judge_n_pr", loop = -1, offset = 32, timer = 46, filter = 1, dst = {
 						{time = 0, x = n_x, y = n_y, w = n_w, h = geo.judge.h},
 						{time = looptime}
 					}},
-					{id = "judge_n_ms", loop = -1, offset = 32, timer = 46, dst = {
+					{id = "judge_n_ms", loop = -1, offset = 32, timer = 46, filter = 1, dst = {
 						{time = 0, x = n_x, y = n_y, w = n_w, h = geo.judge.h},
 						{time = looptime}
 					}}
@@ -1465,9 +1465,10 @@ local function main(keysNumber)
 			}},
 			-- title gradation
 			-- artistの後に描画するとartistが黒箱にならない
-			{id = "titlegradation_header", blend = 4, dst = {
-				{x = header_x + header_side_w, y = header_title_y + artist_size + 4, w = header_title_w, h = title_size + 4}
-			}},
+			-- TODO: disabled for drawing stuff on non-black background, consider removing or fix
+			--{id = "titlegradation_header", blend = 4, dst = {
+			--	{x = header_x + header_side_w, y = header_title_y + artist_size + 4, w = header_title_w, h = title_size + 4}
+			--}},
 		})
 		-- difficulty
 		local margin_outside_x = 0
