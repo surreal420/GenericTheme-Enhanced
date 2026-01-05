@@ -1273,14 +1273,21 @@ local function main(keysNumber)
 			end
 
 			local function bga_dst(x, y, w, h, stretch)
+				local bga_background_black_a = 255
+				if offset.bga.a < 0 then
+					bga_background_black_a = 0
+				end
 				return {
 					-- background black
-					{id = -110, draw = function() return offset.bga.a >= 0 end, dst = {
-						{x = x, y = y, w = w, h = h}
+					{id = -110, op = {41}, dst = {
+						{x = x, y = y, w = w, h = h, a = bga_background_black_a}
 					}},
 					-- bga
 					{id = "bga", op = {41}, stretch = stretch, dst = {
 						{x = x, y = y, w = w, h = h, a = bga_a}
+					}},
+					{id = "bga", op = {40}, stretch = stretch, dst = {
+						{x = x, y = y, w = w, h = h, a = 0}
 					}},
 					-- bga darkness
 					{id = -110, op = {41}, dst = {
@@ -2458,10 +2465,10 @@ local function main(keysNumber)
 			{id = -110, op = {80}, dst = {
 				{x = stagefile_x, y = stagefile_y, w = stagefile_w, h = stagefile_h},
 			}},
-			{id = -100, op = {80, 191}, stretch = 1, dst = {
+			{id = -100, op = {80, 191}, stretch = 1, filter = 1, dst = {
 				{x = stagefile_x, y = stagefile_y, w = stagefile_w, h = stagefile_h},
 			}},
-			{id = "stagefile_default", op = {80, 190}, stretch = 1, dst = {
+			{id = "stagefile_default", op = {80, 190}, stretch = 1, filter = 1, dst = {
 				{x = stagefile_x, y = stagefile_y, w = stagefile_w, h = stagefile_h},
 			}},
 			-- loading progress
