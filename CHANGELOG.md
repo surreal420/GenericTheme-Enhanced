@@ -30,6 +30,10 @@
 - **cyan**: Cyan ring explosion
 - **blueburst**: Blue burst
 
+### 5. Stagefile on BGA Area
+- Stagefile will be shown on BGA Area when BGA is off
+- To disable, set BGA darkness a to 255
+
 ---
 
 ## Configuration Example

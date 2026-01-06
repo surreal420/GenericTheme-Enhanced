@@ -1286,11 +1286,14 @@ local function main(keysNumber)
 					{id = "bga", op = {41}, stretch = stretch, dst = {
 						{x = x, y = y, w = w, h = h, a = bga_a}
 					}},
-					{id = "bga", op = {40}, stretch = stretch, dst = {
-						{x = x, y = y, w = w, h = h, a = 0}
+					{id = -100, op = {40, 191}, stretch = stretch, filter = 1, dst = {
+						{x = x, y = y, w = w, h = h, a = bga_a}
+					}},
+					{id = "stagefile_default", op = {40, 190}, stretch = stretch, filter = 1, dst = {
+						{x = x, y = y, w = w, h = h, a = bga_a}
 					}},
 					-- bga darkness
-					{id = -110, op = {41}, dst = {
+					{id = -110, dst = {
 						{x = x, y = y, w = w, h = h, a = offset.bga_darkness.a}
 					}}
 				}
@@ -1298,7 +1301,7 @@ local function main(keysNumber)
 			if property.fullscreenBga.item.on.isSelected() then
 				append_all(skin.destination, bga_dst(0, 0, header.w, header.h, 3))
 			else
-				append_all(skin.destination, bga_dst(real_bga_x, real_bga_y, real_bga_w, real_bga_h, -1))
+				append_all(skin.destination, bga_dst(real_bga_x, real_bga_y, real_bga_w, real_bga_h, 3))
 			end
 		end
 
