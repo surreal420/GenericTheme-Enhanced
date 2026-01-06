@@ -1284,17 +1284,19 @@ local function main(keysNumber)
 					--}},
 					-- bga
 					{id = "bga", op = {41}, stretch = stretch, dst = {
-						{x = x, y = y, w = w, h = h, a = bga_a}
+						{x = x, y = y, w = w, h = h, r = 255 - offset.bga_darkness.a, g = 255 - offset.bga_darkness.a, b = 255 - offset.bga_darkness.a, a = bga_a}
 					}},
 					{id = -100, op = {40, 191}, stretch = stretch, filter = 1, dst = {
-						{x = x, y = y, w = w, h = h, a = bga_a}
+						{x = x, y = y, w = w, h = h, r = 255 - offset.bga_darkness.a, g = 255 - offset.bga_darkness.a, b = 255 - offset.bga_darkness.a, a = bga_a}
 					}},
 					{id = "stagefile_default", op = {40, 190}, stretch = stretch, filter = 1, dst = {
-						{x = x, y = y, w = w, h = h, a = bga_a}
+						{x = x, y = y, w = w, h = h, r = 255 - offset.bga_darkness.a, g = 255 - offset.bga_darkness.a, b = 255 - offset.bga_darkness.a, a = bga_a}
 					}},
+					-- for practice options
 					{id = "bga", op = {40}, stretch = stretch, dst = {
 						{x = x, y = y, w = w, h = h, a = 0}
 					}},
+					-- standby
 					{id = -110, op = {80}, stretch = stretch, dst = {
 						{x = x, y = y, w = w, h = h, a = 255}
 					}},
@@ -1302,10 +1304,6 @@ local function main(keysNumber)
 						{time = 0, x = x, y = y, w = w, h = h, a = 255},
 						{time = 500, a = 0}
 					}},
-					-- bga darkness
-					{id = -110, dst = {
-						{x = x, y = y, w = w, h = h, a = offset.bga_darkness.a}
-					}}
 				}
 			end
 			if property.fullscreenBga.item.on.isSelected() then
