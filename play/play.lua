@@ -1292,6 +1292,13 @@ local function main(keysNumber)
 					{id = "stagefile_default", op = {40, 190}, stretch = stretch, filter = 1, dst = {
 						{x = x, y = y, w = w, h = h, a = bga_a}
 					}},
+					{id = -110, op = {80}, stretch = stretch, dst = {
+						{x = x, y = y, w = w, h = h, a = 255}
+					}},
+					{id = -110, timer = 40, op = {81}, loop = -1, stretch = stretch, dst = {
+						{time = 0, x = x, y = y, w = w, h = h, a = 255},
+						{time = 500, a = 0}
+					}},
 					-- bga darkness
 					{id = -110, dst = {
 						{x = x, y = y, w = w, h = h, a = offset.bga_darkness.a}
