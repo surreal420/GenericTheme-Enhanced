@@ -1279,9 +1279,9 @@ local function main(keysNumber)
 				--end
 				return {
 					-- background black
-					--{id = -110, op = {41}, dst = {
-					--	{x = x, y = y, w = w, h = h, a = bga_background_black_a}
-					--}},
+					{id = -110, op = {41}, dst = {
+						{x = x, y = y, w = w, h = h, a = bga_a}
+					}},
 					-- bga
 					{id = "bga", op = {41}, stretch = stretch, dst = {
 						{x = x, y = y, w = w, h = h, r = 255 - offset.bga_darkness.a, g = 255 - offset.bga_darkness.a, b = 255 - offset.bga_darkness.a, a = bga_a}
