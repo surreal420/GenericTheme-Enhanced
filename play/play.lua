@@ -1273,15 +1273,15 @@ local function main(keysNumber)
 			end
 
 			local function bga_dst(x, y, w, h, stretch)
-				local bga_background_black_a = 255
-				if offset.bga.a < 0 then
-					bga_background_black_a = 0
-				end
+				--local bga_background_black_a = 255
+				--if offset.bga.a < 0 then
+				--	bga_background_black_a = 0
+				--end
 				return {
 					-- background black
-					{id = -110, op = {41}, dst = {
-						{x = x, y = y, w = w, h = h, a = bga_background_black_a}
-					}},
+					--{id = -110, op = {41}, dst = {
+					--	{x = x, y = y, w = w, h = h, a = bga_background_black_a}
+					--}},
 					-- bga
 					{id = "bga", op = {41}, stretch = stretch, dst = {
 						{x = x, y = y, w = w, h = h, a = bga_a}
@@ -1291,6 +1291,9 @@ local function main(keysNumber)
 					}},
 					{id = "stagefile_default", op = {40, 190}, stretch = stretch, filter = 1, dst = {
 						{x = x, y = y, w = w, h = h, a = bga_a}
+					}},
+					{id = "bga", op = {40}, stretch = stretch, dst = {
+						{x = x, y = y, w = w, h = h, a = 0}
 					}},
 					{id = -110, op = {80}, stretch = stretch, dst = {
 						{x = x, y = y, w = w, h = h, a = 255}
