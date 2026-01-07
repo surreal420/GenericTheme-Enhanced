@@ -1676,7 +1676,7 @@ local function main(keysNumber)
 				{id = "scoregraph_background", src = "src_scoregraph_background", x = 0, y = 0, w = -1, h = -1}
 			)
 			table.insert(skin.destination,
-				{id = "scoregraph_background", dst = {
+				{id = "scoregraph_background", stretch = 3, filter = 1, dst = {
 					{x = geo.scoregraph.x, y = geo.scoregraph.y, w = geo.scoregraph.w, h = geo.scoregraph.h, a = 255 + offset.scoregraph.a}
 				}}
 			)
