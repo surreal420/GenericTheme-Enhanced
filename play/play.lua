@@ -2126,7 +2126,7 @@ local function main(keysNumber)
 		{id = "glow", src = "src_glow", x = 0, y = 0, w = 492, h = 48}
 	)
 	do
-		local h = geo.lane.each_w[keysNumber + 1] * 0.4 local loading_a = 180 local playing_dark_a = 50
+		local h = geo.lane.each_w[keysNumber + 1] * 0.5 local loading_a = 180 local playing_dark_a = 50
 		-- loading
 		table.insert(skin.destination, {id = "glow", op = {80}, offset = 3, blend = 2, dst = {
 			{x = geo.lane.x, y = geo.lane.y, w = geo.lane.w, h = h, a = loading_a},
