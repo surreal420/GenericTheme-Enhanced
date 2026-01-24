@@ -141,6 +141,7 @@ local property = {
 			timingVisualizer = {name = "Timing Visualizer", op = 953},
 			customizedImage = {name = "Customized Image", op = 954},
 			banner = {name = "Banner", op = 955},
+			disabled = {name = "Disabled", op = 956},
 		}
 	},
 	failedAnimation = {
@@ -326,6 +327,7 @@ local filepath = {
 	{name = "Gauge", path = "customize/gauge/*.png", def = "dotgradation"},
 	{name = "LowerLaneArea Image", path = "customize/lowerlanearea/*.png"},
 	{name = "ScoreGraph Background", path = "customize/scoregraph/*.png", def = "default"},
+	{name = "Turntable", path = "customize/turntable/*.png", def = "default"},
 }
 
 local offset_source = {
@@ -619,6 +621,12 @@ local function main(keysNumber)
 		{id = "src_frame_lane", path = "parts/frame_lane.png"},
 		{id = "src_frame_bga", path = "parts/frame_bga.png"},
 		{id = "src_frame_bpm", path = "parts/frame_bpm.png"},
+
+		{id = "src_keyflash", path = "parts/keyflash.png"},
+		{id = "src_turntable", path = "customize/turntable/*.png"},
+		{id = "src_keywhite", path = "parts/keywhite.png"},
+		{id = "src_keyblack", path = "parts/keyblack.png"},
+		{id = "src_turntable_base", path = "parts/turntable_base.png"},
 
 		{id = "src_titlegradation_header", path = "parts/titlegradation_header.png"},
 		{id = "src_titlegradation_standby", path = "parts/titlegradation_standby.png"},
@@ -1250,6 +1258,92 @@ local function main(keysNumber)
 				{x = 0, y = 0, w = header.w, h = header.h}
 			}}
 		)
+	end
+
+	-- tt and keys & keyflash
+	if property.hideFrames.item.off.isSelected() then
+		table.insert(skin.image,
+			{id = "keywhite", src = "src_keywhite", x = 0, y = 0, w = -1, h = -1}
+		)
+		table.insert(skin.image,
+			{id = "keyblack", src = "src_keyblack", x = 0, y = 0, w = -1, h = -1}
+		)
+		table.insert(skin.image,
+			{id = "keyflash", src = "src_keyflash", x = 0, y = 0, w = -1, h = -1}
+		)
+
+		local timer = {101, 102, 103, 104, 105, 106, 107}
+		local factor = 0.85
+
+		for i = 1, keysNumber do
+			local w = geo.lane.each_w[1]*factor
+			local h = w*1.5*(1+(i%2)*0.1)
+			table.insert(skin.destination, {
+				id = (i%2==1) and "keywhite" or "keyblack", blend = 0, filter = 1, dst = {
+					{
+						x = geo.lane.each_x[i]+geo.lane.each_w[i]*0.5-w*0.5,
+						y = geo.lane.y-h*(1.1+0.1*(i%2)),
+						w = w,
+						h = h,
+						a = 255
+					}
+				}
+			})
+			table.insert(skin.destination, {
+				id = "keyflash", timer = timer[i], blend = 2, filter = 1, dst = {
+					{
+						x = geo.lane.each_x[i]+geo.lane.each_w[i]*0.5-w*0.5,
+						y = geo.lane.y-h*(1.1+0.1*(i%2)),
+						w = w,
+						h = h,
+						r = 255,
+						g = 5,
+						b = 5,
+					}
+				}
+			})
+		end
+
+		table.insert(skin.image,
+			{id = "turntable_base", src = "src_turntable_base", x = 0, y = 0, w = -1, h = -1}
+		)
+		table.insert(skin.image,
+			{id = "turntable", src = "src_turntable", x = 0, y = 0, w = -1, h = -1}
+		)
+		
+		factor = 0.45
+		local w = geo.lane.each_w[8]*factor
+		local h = geo.lane.each_w[8]*factor
+		local turntable_x_align = 1/6
+		local w_ttbase = w*10.0/3.0*1.25
+		local h_ttbase = h*10.0/3.0*1.25
+		if isRightScratch() then
+			turntable_x_align = 1-turntable_x_align
+		end
+
+
+		table.insert(skin.destination, {
+			id = "turntable_base", blend = 0, filter = 1, dst = {
+				{
+					x = geo.lane.each_x[8]+geo.lane.each_w[8]*turntable_x_align-w_ttbase*0.5,
+					y = geo.lane.y-geo.lane.each_w[8]*0.8-h_ttbase*0.5,
+					w = w_ttbase,
+					h = h_ttbase
+				},
+			}
+		})
+		
+		table.insert(skin.destination, {
+			id = "turntable", blend = 0, filter = 1, offset = 1, dst = {
+				{
+					x = geo.lane.each_x[8]+geo.lane.each_w[8]*turntable_x_align-w*0.5,
+					y = geo.lane.y-geo.lane.each_w[8]*0.8-h*0.5,
+					w = w,
+					h = h
+				},
+			}
+		})
+
 	end
 
 	-- bga
@@ -2561,12 +2655,23 @@ local function main(keysNumber)
 		geo.gauge.x = geo.gaugearea.x + geo.gaugearea.padding_x
 	end
 	geo.gauge.y = 138
+	if property.lowerLaneArea.item.disabled.isSelected() then
+		geo.gauge.y = 38
+	else
+		geo.gauge.y = 138
+	end
 	geo.gauge.w = geo.gaugearea.w - geo.gaugearea.padding_x * 2
 	geo.gauge.h = 35
 	-- gauge area background
-	table.insert(skin.destination, {id = -110, dst = {
-		{x = geo.gaugearea.x, y = 0, w = geo.gaugearea.w, h = header.h - geo.lane.h - 4, a = 255 + offset.gaugearea.a},
-	}})
+	if property.lowerLaneArea.item.disabled.isSelected() then
+		table.insert(skin.destination, {id = -110, dst = {
+			{x = geo.gaugearea.x, y = 0, w = geo.gaugearea.w, h = geo.gauge.y + geo.gauge.h + 7 + 35 + 10, a = 255 + offset.gaugearea.a},
+		}})
+	else
+		table.insert(skin.destination, {id = -110, dst = {
+			{x = geo.gaugearea.x, y = 0, w = geo.gaugearea.w, h = header.h - geo.lane.h - 4, a = 255 + offset.gaugearea.a},
+		}})
+	end
 	-- gauge
 	do
 		local x = geo.gauge.x local w = geo.gauge.w
@@ -2654,6 +2759,9 @@ local function main(keysNumber)
 		})
 
 		local line_x = geo.gauge.x local line_y = geo.lane.y - 8 local line_w = geo.gauge.w * 0.6 local line_h = 2
+		if property.lowerLaneArea.item.disabled.isSelected() then
+			line_y = geo.gauge.y + geo.gauge.h + 7 + 35 + 2
+		end
 		local text_x = line_x + line_w local text_y = line_y - text_size - 3
 		if is2P() then
 			line_x = geo.gauge.x + geo.gauge.w - line_w
@@ -2705,12 +2813,12 @@ local function main(keysNumber)
 				merge_all({time = cycle}, fullcombo_color[2])
 			}},
 			-- missed
-			{id = -111, draw = function()
-				return main_state.option(op_bd) or main_state.option(op_pr)
-				end, dst = {
-					merge_all({x = line_x, y = line_y, w = line_w, h = line_h}, missed_color),
-				}
-			},
+			-- {id = -111, draw = function()
+			--	return main_state.option(op_bd) or main_state.option(op_pr)
+			--	end, dst = {
+			--		merge_all({x = line_x, y = line_y, w = line_w, h = line_h}, missed_color),
+			--	}
+			--},
 		})
 	end
 	-- score
@@ -2762,7 +2870,7 @@ local function main(keysNumber)
 		})
 	end
 	-- lowerLaneArea
-	do
+	if not property.lowerLaneArea.item.disabled.isSelected() then
 		append_all(skin.judgegraph, {
 			{id = "lla_notesgraph_notestype", type = 0, backTexOff = 1},
 			{id = "lla_notesgraph_judge", type = 1, backTexOff = 1},
